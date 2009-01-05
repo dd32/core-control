@@ -1,8 +1,8 @@
 <?php
 /*
 Plugin Name: HTTP Access Logger Module
-Version: 0.5.3
-Description: <strong>Requires WordPress 2.8 + patch <a href="http://trac.wordpress.org/ticket/8780">#8780</a></strong> Core Control HTTP Logger module, This allows you to Log external connections which WordPress makes.
+Version: 0.6
+Description: <strong>Requires WordPress 2.8 or 2.7.1  & patch <a href="http://trac.wordpress.org/ticket/8780">#8780</a></strong> Core Control HTTP Logger module, This allows you to Log external connections which WordPress makes.
 Author: Dion Hulse
 Author URI: http://dd32.id.au/
 */

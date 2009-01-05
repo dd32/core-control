@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Updates Module
-Version: 0.5
+Version: 0.6
 Description: Core Control Updates module, This allows you to Disable Plugin/Theme/Core update checking, or to force a check to take place.
 Author: Dion Hulse
 Author URI: http://dd32.id.au/

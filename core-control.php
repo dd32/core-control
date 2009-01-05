@@ -1,9 +1,9 @@
 <?php
 /*
 Plugin Name: Core Control
-Version: 0.5.3-alpha
+Version: 0.6
 Plugin URI: http://dd32.id.au/wordpress-plugins/?plugin=core-control
-Description: 
+Description: Core Control is a set of plugin modules which can be used to control certain aspects of the WordPress control.
 Author: Dion Hulse
 Author URI: http://dd32.id.au/
 */
@@ -14,7 +14,7 @@ class core_control {
 	var $dd32_requires = 5;
 	var $basename = '';
 	var $folder = '';
-	var $version = '0.5.2-alpha';
+	var $version = '0.6';
 	
 	var $modules = array();
 	
@@ -49,8 +49,8 @@ class core_control {
 		wp_register_script('core-control', plugins_url( $this->folder . '/core-control.js' ), array('jquery'), $this->version);
 		wp_register_style ('core-control', plugins_url( $this->folder . '/core-control.css' ), array(), $this->version);
 
-		//DD32::add_configure($this->basename, __('Add From Server', 'core-control'), admin_url('media-new.php?page=core-control'));
-		//DD32::add_changelog($this->basename, 'http://svn.wp-plugins.org/core-control/trunk/readme.txt');
+		DD32::add_configure($this->basename, __('Core Control', 'core-control'), admin_url('options-general.php?page=core-control'));
+		DD32::add_changelog($this->basename, 'http://svn.wp-plugins.org/core-control/trunk/readme.txt');
 
 		//add menus (not on post/ajax pages, causes PHP Warnings)
 		if ( !in_array($GLOBALS['pagenow'], array('admin-post.php', 'admin-ajax.php') ) )

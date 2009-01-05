@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Filesystem Module
-Version: 0.5
+Version: 0.6
 Description: Core Control Filesystem module, This allows you to Enable/Disable the different Filesystem access methods which WordPress supports for upgrades
 Author: Dion Hulse
 Author URI: http://dd32.id.au/
@@ -190,7 +190,7 @@ class core_control_filesystem {
 					unlink($temp_file);
 				}
 				break;
-			case 'ssh2':
+			case 'ssh':
 				$available = extension_loaded('ssh2');
 				break;
 			case 'ftpext':

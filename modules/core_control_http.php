@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: HTTP Access Module
-Version: 0.5
+Version: 0.6
 Description: Core Control HTTP module, This allows you to Enable/Disable the different HTTP Access methods which WordPress 2.7+ supports
 Author: Dion Hulse
 Author URI: http://dd32.id.au/
