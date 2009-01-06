@@ -35,7 +35,12 @@ This module requires either WordPress trunk(2.8) or WordPress 2.7.1 (or the 2.7 
 
 The purpose of this module is to log all outgoing connections WordPress makes, It allows you to view the resulting data, as well as to view the time it has taken for each of the requests to be made.
 
-Please Note: This module is a bit buggy at present, It needs some more work, but for the most-part, it works well.
+= Cron Module =
+This module is designed to allow you to view the WordPress Cron tasks which are currently scheduled to occur.
+
+The Module allows you to run any task by clicking a link, and allows the cancelation of Once-Off scheduled tasks,  However it is not recomended unless you are sure of what you are doing.
+
+Future revisions of this Module will most likely allow you to configure custom tasks as well for testing purposes.
 
 == Frequently Asked Questions ==
 
@@ -55,6 +60,7 @@ Because no-one has asked me.. Ask me some questions! wordpress@dd32.id.au
 
 = 0.7 =
  * HTTP Logger: Support Request Failures instead of erroring out..
+ * Introduce the Cron Tasks viewer
 
 == Future Modules ==
 These are only ideas, If you've got one you'd like added to the list, Get in touch with me :) wordpress@dd32.id.au
@@ -70,3 +76,4 @@ These are only ideas, If you've got one you'd like added to the list, Get in tou
 3. The Updates Module
 4. The HTTP Module
 5. The HTTP Logging module
+6. The Cron Module
