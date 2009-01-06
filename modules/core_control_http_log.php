@@ -123,7 +123,7 @@ class core_control_http_log {
 				wp_delete_post($id);
 		
 		update_option('core_control-http_log', $option);
-		wp_redirect(admin_url('options-general.php?page=core-control&module=http_log'));
+		wp_redirect(admin_url('tools.php?page=core-control&module=http_log'));
 	}
 
 	function the_page() {

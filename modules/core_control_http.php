@@ -58,7 +58,7 @@ class core_control_http {
 		}
 		
 		update_option('core_control-http', $option);
-		wp_redirect(admin_url('options-general.php?page=core-control&module=http'));
+		wp_redirect(admin_url('tools.php?page=core-control&module=http'));
 	}
 	
 	function the_page() {

@@ -48,11 +48,11 @@ class core_control_cron {
 		}
 		
 		update_option('core_control-cron', $option);
-		wp_redirect(admin_url('options-general.php?page=core-control&module=cron'));
+		wp_redirect(admin_url('tools.php?page=core-control&module=cron'));
 	}
 	
 	function handle_post_cancel() {
-		$url = admin_url('options-general.php?page=core-control&module=cron&task=error');
+		$url = admin_url('tools.php?page=core-control&module=cron&task=error');
 		wp_redirect($url);
 		$crons = get_option('cron', array());
 		if ( isset($_GET['task']) ) {
@@ -65,7 +65,7 @@ class core_control_cron {
 		wp_redirect($url);
 	}
 	function handle_post_run() {
-		$url = admin_url('options-general.php?page=core-control&module=cron&task=error');
+		$url = admin_url('tools.php?page=core-control&module=cron&task=error');
 		$crons = get_option('cron', array());
 		wp_redirect($url);
 		if ( isset($_GET['task']) ) {

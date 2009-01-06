@@ -47,7 +47,7 @@ class core_control_filesystem {
 		}
 		
 		update_option('core_control-fs', $option);
-		wp_redirect(admin_url('options-general.php?page=core-control&module=fs'));
+		wp_redirect(admin_url('tools.php?page=core-control&module=fs'));
 	}
 	
 	function handle_transport($transport) {

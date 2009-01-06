@@ -59,7 +59,7 @@ class core_control_updates {
 	}
 	
 	function update_disabled_warning() {
-		echo '<div class="updated fade"><p><strong>Warning:</strong> Update checking is currently disabled, To enable, Visit <a href="options-general.php?page=core-control&amp;module=updates">Core Control\'s options page</a>.</p></div>';
+		echo '<div class="updated fade"><p><strong>Warning:</strong> Update checking is currently disabled, To enable, Visit <a href="tools.php?page=core-control&amp;module=updates">Core Control\'s options page</a>.</p></div>';
 	}
 	
 	function handle_posts() {
@@ -81,7 +81,7 @@ class core_control_updates {
 			$option['core']['enabled'] = false;
 		
 		update_option('core_control-updates', $option);
-		wp_redirect(admin_url('options-general.php?page=core-control&module=updates'));
+		wp_redirect(admin_url('tools.php?page=core-control&module=updates'));
 	}
 	
 	function the_page() {
