@@ -60,7 +60,7 @@ Because no-one has asked me.. Ask me some questions! wordpress@dd32.id.au
 
 = 0.7 =
  * HTTP Logger: Support Request Failures instead of erroring out..
- * Introduce the Cron Tasks viewer
+ * Introduce the Cron Tasks Module
 
 == Future Modules ==
 These are only ideas, If you've got one you'd like added to the list, Get in touch with me :) wordpress@dd32.id.au

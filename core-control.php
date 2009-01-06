@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Core Control
-Version: 0.7-dev
+Version: 0.7
 Plugin URI: http://dd32.id.au/wordpress-plugins/?plugin=core-control
 Description: Core Control is a set of plugin modules which can be used to control certain aspects of the WordPress control.
 Author: Dion Hulse
@@ -46,13 +46,14 @@ class core_control {
 		load_plugin_textdomain('core-control', '', $this->folder . '/langs/');
 
 		//Register our JS & CSS
-		wp_register_script('core-control', plugins_url( $this->folder . '/core-control.js' ), array('jquery'), $this->version);
-		wp_register_style ('core-control', plugins_url( $this->folder . '/core-control.css' ), array(), $this->version);
+		//When i implement it and convert over.. yes.
+		//wp_register_script('core-control', plugins_url( $this->folder . '/core-control.js' ), array('jquery'), $this->version);
+		//wp_register_style ('core-control', plugins_url( $this->folder . '/core-control.css' ), array(), $this->version);
 
 		DD32::add_configure($this->basename, __('Core Control', 'core-control'), admin_url('options-general.php?page=core-control'));
 		DD32::add_changelog($this->basename, 'http://svn.wp-plugins.org/core-control/trunk/readme.txt');
 
-		//add menus (not on post/ajax pages, causes PHP Warnings)
+		//add menus (not on post/ajax pages, causes PHP Warnings under 2.7/early 2.8's)
 		if ( !in_array($GLOBALS['pagenow'], array('admin-post.php', 'admin-ajax.php') ) )
 			add_options_page(__('Core Control', 'core-control'), __('Core Control', 'core-control'), 'administrator', 'core-control', array(&$this, 'main_page'));
 		//Add page
@@ -90,10 +91,10 @@ class core_control {
 	}
 	
 	function handle_posts() {
-		foreach ( (array)$_POST['checked'] as $module ) {
+		foreach ( (array)$_POST['checked'] as $module )
 			if ( 0 !== validate_file($module) )
 				wp_die('I dont trust you, That data looks malformed to me.');
-		}
+
 		update_option('core_control-active_modules', (array)$_POST['checked']);
 		wp_redirect( admin_url('options-general.php?page=core-control') );
 	}
@@ -113,7 +114,9 @@ class core_control {
 		}
 		echo '<ul class="subsubsub">';
 		foreach ( $menus as $menu ) {
-			$url = 'options-general.php?page=core-control&module=' . $menu[0];
+			$url = 'options-general.php?page=core-control';
+			if ( 'default' != $menu[0] )
+				$url .= '&module=' . $menu[0];
 			$title = $menu[1];
 			$sep = $menu == end($menus) ? '' : ' | ';
 			$current = $module == $menu[0] ? ' class="current"' : '';
@@ -145,9 +148,9 @@ class core_control {
 		foreach ( $files as $module ) {
 			$details = get_plugin_data(WP_PLUGIN_DIR . '/' . $this->folder . '/modules/' . $module, true, false);
 			$active = $this->is_module_active($module);
-			$class = $active ? ' style="background-color: #e7f7d3"' : '';
+			$style = $active ? ' style="background-color: #e7f7d3"' : '';
 	?>
-	<tr <?php echo $class ?>>
+	<tr<?php echo $style ?>>
 		<th scope="row" class="check-column"><input type="checkbox" name="checked[]" value="<?php echo attribute_escape($module) ?>" <?php if ( $active ) echo 'checked="checked"' ?> /></th>
 		<td><?php echo $details['Title'] . ' ' . $details['Version'] ?></td>
 		<td><?php echo $details['Description'] ?></td>
