@@ -5,10 +5,12 @@ Requires at least: 2.7
 Tested up to: 2.8
 Stable tag: 0.6
 
-Core Control is a set of plugin modules which can be used to control certain aspects of the WordPress control.
-Currently, Core Control features modules for managing Filesystem Access, Managing plugin/theme/core updates, Managing HTTP Transports & External HTTP Request logging
+Core Control is a set of plugin modules which can be used to control certain aspects of the WordPress Core.
+Currently, Core Control features modules for managing Filesystem Access, Managing plugin/theme/core updates, Managing HTTP Transports & External HTTP Request logging.
 
 == Description ==
+
+Please Note: Core Control is mainly a Developers plugin, However it can be used by end users alike, Just realise, That novice users are not the initial target audience, and as such, this plugin (and its modules) may be more technical aimed.
 
 Core Control is a set of plugin modules which can be used to control certain aspects of the WordPress control.
 Currently, Core Control features modules for managing Filesystem Access, Managing plugin/theme/core updates, Managing HTTP Transports & External HTTP Request logging
@@ -35,18 +37,24 @@ The purpose of this module is to log all outgoing connections WordPress makes, I
 
 Please Note: This module is a bit buggy at present, It needs some more work, but for the most-part, it works well.
 
-== FAQ ==
+== Frequently Asked Questions ==
 
- Q. Why are there no Questions here?
- A. Because no-one has asked me.. Ask me some questions! wordpress@dd32.id.au
+= Who is this plugin aimed at? =
+This plugin is primarily aimed at Developers, However, Its just as useable by novice users, just as long as you realise that the plugin -will- contain technical terms, and will not explain everything 100%, Its sort of a "If you know what this does, Here it is for you to use it, If not, leave it alone"
 
-== Changelog ==
+= Why are there no Questions here? =
+Because no-one has asked me.. Ask me some questions! wordpress@dd32.id.au
+
+== Change log ==
 
 = 0.5 =
  * Original Alpha releases
 
 = 0.6 =
  * Initial Public Release
+
+= 0.7 =
+ * HTTP Logger: Support Request Failures instead of erroring out..
 
 == Future Modules ==
 These are only ideas, If you've got one you'd like added to the list, Get in touch with me :) wordpress@dd32.id.au

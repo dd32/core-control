@@ -90,7 +90,7 @@ class core_control_http_log {
 		//A Request has finished, Lets remove useless items:
 		unset($this->request->start);
 		$post_content_filtered  ='';
-		if ( isset($this->request->result['body']) ) {
+		if ( !is_wp_error($this->request->result) && isset($this->request->result['body']) ) {
 			$post_content_filtered = $this->request->result['body'];
 			unset($this->request->result['body']);
 		}
@@ -223,7 +223,7 @@ class core_control_http_log {
 			<?php
 				foreach ( (array)$https as $request ) {
 					$the_request = unserialize($request->post_content);
-					if ( isset($the_request->result['response']) && !empty($request->post_content_filtered) ) 
+					if ( !is_wp_error($the_request->result) && isset($the_request->result['response']) && !empty($request->post_content_filtered) ) 
 						$the_request->result['body'] = $request->post_content_filtered;
 					echo '<tr id="http-' . $request->ID . '">';
 					echo '<td class="check-column"><input type="checkbox" name="checked[]" value="' . $request->ID . '" /></td>';
@@ -246,13 +246,13 @@ class core_control_http_log {
 		$id = $_REQUEST['ID'];
 		$request = get_post($id);
 		$the_request = unserialize($request->post_content);
-		if ( isset($the_request->result['response']) && !empty($request->post_content_filtered) ) 
+		if ( !is_wp_error($the_request->result) && isset($the_request->result['response']) && !empty($request->post_content_filtered) ) 
 			$the_request->result['body'] = $request->post_content_filtered;
 		?>
 		<div><ul class="hide-if-no-js tab-listing">
 				<li><a href="#request-details-<?php echo $id ?>">Request Details</a></li>
-				<li><a href="#response-headers-<?php echo $id ?>">Response Headers</a></li>
-				<li><a href="#response-body-<?php echo $id ?>">Response Body</a></li>
+				<?php if ( !is_wp_error($the_request->result) && !empty($the_request->result['headers']) ) : ?><li><a href="#response-headers-<?php echo $id ?>">Response Headers</a></li> <?php endif; ?>
+				<?php if ( !is_wp_error($the_request->result) &&!empty($the_request->result['body']) ) : ?><li><a href="#response-body-<?php echo $id ?>">Response Body</a></li> <?php endif; ?>
 			</ul>
 			<br class="clear" /></div>
 		
@@ -269,12 +269,26 @@ class core_control_http_log {
 				<tr>
 					<th>Result</th>
 					<td><?php
-							if ( !isset($the_request->result['response']) )
+							if ( is_wp_error($the_request->result) || !isset($the_request->result['response']) )
 								echo 'error';
 							else
 								echo $the_request->result['response']['code'] . ' ' . $the_request->result['response']['message'];
 							 ?></td>
 				</tr>
+<?php if ( is_wp_error($the_request->result) ) : ?>
+				<tr>
+					<th>Error Details</th>
+					<td><table><?php
+							foreach ( (array)$the_request->result->errors as $code => $value ) {
+								$value = implode(', ', (array)$value);
+								echo '<tr>';
+									echo '<td valign="top">' . $code . '</td>';
+									echo '<td>' . $value . '</td>';
+								echo '</tr>';
+							}
+							?></table></td>
+				</tr>
+<?php endif; ?>
 				<tr>
 					<th>Time Taken</th>
 					<td><?php echo $the_request->time ?> seconds</td>
@@ -320,27 +334,32 @@ class core_control_http_log {
 		</div>
 		<div class="tab-content" id="response-headers-<?php echo $id ?>">
 			<table>
-				<?php foreach ( $the_request->result['headers'] as $header => $value ) {
-					$header = htmlentities($header);
-					$value = htmlentities($value);
-					echo '<tr>';
-						echo '<th>' . $header . '</th>';
-						echo '<td>' . $value . '</td>';
-					echo '</tr>';
+				<?php
+				if ( !is_wp_error($the_request->result) && !empty($the_request->result['headers']) ) {
+					foreach ( $the_request->result['headers'] as $header => $value ) {
+						$header = htmlentities($header);
+						$value = htmlentities($value);
+						echo '<tr>';
+							echo '<th>' . $header . '</th>';
+							echo '<td>' . $value . '</td>';
+						echo '</tr>';
+					}
 				}
 			?>
 			</table>
 		</div>
 		<div class="tab-content" id="response-body-<?php echo $id ?>">
 			<?php
-				$body =& $the_request->result['body'];
-				if ( is_serialized($body) ) {
-					echo '<p>Content looks to be a Serialized string, Deserializing</p>';
-					echo '<pre><code>';
-					echo htmlentities(print_r(unserialize($body), true));
-					echo "\n</code></pre>";
-				} else {
-					echo '<pre>' . htmlentities($body) . '</pre>';
+				if ( !is_wp_error($the_request->result) ) {
+					$body =& $the_request->result['body'];
+					if ( is_serialized($body) ) {
+						echo '<p>Content looks to be a Serialized string, Deserializing</p>';
+						echo '<pre><code>';
+						echo htmlentities(print_r(unserialize($body), true));
+						echo "\n</code></pre>";
+					} else {
+						echo '<pre>' . htmlentities($body) . '</pre>';
+					}
 				}
 			?>
 		</div>
