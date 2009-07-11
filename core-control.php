@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Core Control
-Version: 0.8
+Version: 0.9-dev
 Plugin URI: http://dd32.id.au/wordpress-plugins/?plugin=core-control
 Description: Core Control is a set of plugin modules which can be used to control certain aspects of the WordPress control.
 Author: Dion Hulse
@@ -14,7 +14,7 @@ class core_control {
 	var $dd32_requires = 5;
 	var $basename = '';
 	var $folder = '';
-	var $version = '0.8';
+	var $version = '0.9-dev';
 	
 	var $modules = array();
 	
