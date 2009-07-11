@@ -51,9 +51,9 @@ class core_control_filesystem {
 	}
 	
 	function handle_transport($transport) {
-		if ( $this->settings[$transport]['enabled'] === false ) {
+		if ( isset($this->settings[$transport]['enabled']) && $this->settings[$transport]['enabled'] === false ) {
 			foreach ( array( 'direct', 'ssh', 'ftpext', 'ftpsockets' ) as $a_transport ) {
-				if ( $this->settings[$a_transport]['enabled'] === false )
+				if ( !isset($this->settings[$a_transport]['enabled']) || $this->settings[$a_transport]['enabled'] === false )
 					continue;
 				if ( $this->is_available($a_transport) )
 					return $a_transport;

@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: HTTP Access Module
-Version: 0.6
+Version: 0.7
 Description: Core Control HTTP module, This allows you to Enable/Disable the different HTTP Access methods which WordPress 2.7+ supports
 Author: Dion Hulse
 Author URI: http://dd32.id.au/
@@ -20,9 +20,10 @@ class core_control_http {
 
 		foreach ( $this->settings as $transport => $opts )
 			$this->settings[$transport]['filter'] = "use_{$transport}_transport";
-
-		if ( ! has_filter('use_exthttp_transport') ) //If the function's not deprecated, we'll hook on the old one. see WP#8772
-			$this->settings['exthttp']['filter'] = 'use_http_extension_transport';
+		$this->settings['exthttp']['filter'] = 'use_http_extension_transport';
+		
+		//if ( ! has_filter('use_exthttp_transport') ) //If the function's not deprecated, we'll hook on the old one. see WP#8772
+		//	$this->settings['exthttp']['filter'] = 'use_http_extension_transport';
 
 		add_action('admin_post_core_control-http', array(&$this, 'handle_posts'));
 
@@ -90,12 +91,18 @@ class core_control_http {
 		foreach ( array('exthttp' => 'PHP HTTP Extension', 'curl' => 'cURL', 'streams' => 'PHP Streams', 'fopen' => 'PHP fopen()', 'fsockopen' => 'PHP fsockopen()' ) as $transport => $text ) {
 			$class = "WP_Http_$transport";
 			$class = new $class;
+			
+			//Before we test, we need to remove any filters we've loaded.
+			$filtered = has_filter($this->settings[$transport]['filter'], array(&$this, 'disable_transport'));
+			if ( $filtered )
+				remove_filter($this->settings[$transport]['filter'], array(&$this, 'disable_transport'));
 			$useable = $class->test();
+			if ( $filtered )
+				add_filter($this->settings[$transport]['filter'], array(&$this, 'disable_transport'));
 			$disabled = $this->settings[$transport]['enabled'] === false;
 			$colour = $useable ? '#e7f7d3' : '#ee4546';
-			if ( $useable && $disabled ) {
+			if ( $useable && $disabled )
 				$colour = '#e7804c';
-			}
 			
 			$status = $disabled ? 'Disabled' : ($useable ? 'Available' : 'Not Available');
 			

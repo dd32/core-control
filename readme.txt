@@ -2,8 +2,7 @@
 Contributors: dd32
 Tags: 2.7, admin, filesystem, manager
 Requires at least: 2.7
-Tested up to: 2.8
-Stable tag: 0.7
+Stable tag: 0.8
 
 Core Control is a set of plugin modules which can be used to control certain aspects of the WordPress Core.
 Currently, Core Control features modules for managing Filesystem Access, Managing plugin/theme/core updates, Managing HTTP Transports & External HTTP Request logging.
@@ -61,6 +60,12 @@ Because no-one has asked me.. Ask me some questions! wordpress@dd32.id.au
 = 0.7 =
  * HTTP Logger: Support Request Failures instead of erroring out..
  * Introduce the Cron Tasks Module
+
+= 0.8 =
+ * Move from Settings menu to the Tools menu, Sorry for the confusion folks, But it makes better sense there :)
+ * HTTP: Allow to enable disabled transports after WP 2.8 HTTP do-over
+ * Update Module: Switch to *_transient() for 2.8 compatibility
+ * Fix 2.8.1's plugin security mashes..
 
 == Future Modules ==
 These are only ideas, If you've got one you'd like added to the list, Get in touch with me :) wordpress@dd32.id.au

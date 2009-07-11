@@ -24,7 +24,7 @@ class core_control_updates {
 			remove_action( 'admin_init', '_maybe_update_plugins' );
 			remove_action( 'wp_update_plugins', 'wp_update_plugins' );
 			
-			add_action('pre_option_update_plugins', array(&$this, 'handle_option_disable'));
+			add_action('pre_transient_update_plugins', array(&$this, 'handle_option_disable'));
 			add_action('load-plugins.php', create_function('', 'add_action("admin_notices", array(&$GLOBALS["core-control"]->modules["core_control_updates"], "update_disabled_warning"));'));
 		}
 		if ( $this->settings['themes']['enabled'] === false ) { 
@@ -33,13 +33,13 @@ class core_control_updates {
 			remove_action( 'admin_init', '_maybe_update_themes' );
 			remove_action( 'wp_update_themes', 'wp_update_themes' );
 
-			add_action('pre_option_update_themes', array(&$this, 'handle_option_disable'));
+			add_action('pre_transient_update_themes', array(&$this, 'handle_option_disable'));
 			add_action('load-themes.php', create_function('', 'add_action("admin_notices", array(&$GLOBALS["core-control"]->modules["core_control_updates"], "update_disabled_warning"));'));
 
 		}
 		
 		if ( $this->settings['core']['enabled'] === false ) {
-			add_action('pre_option_update_core', array(&$this, 'handle_option_disable'));
+			add_action('pre_transient_update_core', array(&$this, 'handle_option_disable'));
 			add_action('load-update-core.php', create_function('', 'add_action("admin_notices", array(&$GLOBALS["core-control"]->modules["core_control_updates"], "update_disabled_warning"));'));
 		}
 	
@@ -99,7 +99,14 @@ class core_control_updates {
 		if ( $this->settings['plugins']['enabled'] == false ) {
 			echo '<p>Plugin update checking is currently disabled</p>';
 		} else {
-			$plugins = get_option('update_plugins');
+			if ( ! $plugins = get_transient('update_plugins') )
+				$plugins = (object)array();
+			if ( ! isset($plugins->last_checked) )
+				$plugins->last_checked = 0;
+			if ( ! isset($plugins->checked) ) 
+				$plugins->checked = array();
+			if ( ! isset($plugins->response) )
+				$plugins->response = array();
 			printf('<p>Last updated: %s (<strong>%s ago</strong>)</p>', date('r', $plugins->last_checked), human_time_diff($plugins->last_checked, time()));
 			printf('<p><strong>%s</strong> plugins checked, there are updates available for <strong>%s</strong> plugin(s)</p>', count($plugins->checked), count($plugins->response));
 			
@@ -107,17 +114,17 @@ class core_control_updates {
 			if ( !empty($_GET['plugins_update']) ) {
 				echo '<div style="margin-left: 2em">';
 				echo '<p>Checking for updates...</p>';
-				delete_option('update_plugins');
+				delete_transient('update_plugins');
 				$result = wp_update_plugins();
 				if ( false === $result ) {
 					echo '<p>An Error occured during the update check</p>';
 				} else {
-					$new = get_option('update_plugins');
-					if ( count($new->response) > count($plugins->response) )
+					$new = get_transient('update_plugins');
+					if ( is_object($plugins) && count($new->response) > count($plugins->response) )
 						echo '<p>New updates were found</p>';
-					elseif ( count($new->response) == count($plugins->response) )
+					elseif ( is_object($plugins) && count($new->response) == count($plugins->response) )
 						echo '<p>No new updates were found</p>';
-					elseif ( count($new->response) < count($plugins->response) )
+					elseif ( is_object($plugins) && count($new->response) < count($plugins->response) )
 						echo '<p>The available updates list has been updated</p>';
 					else
 						echo '<p>There are no plugin updates avaialble at this time</p>';
@@ -143,22 +150,26 @@ class core_control_updates {
 		if ( $this->settings['themes']['enabled'] == false ) {
 			echo '<p>Theme update checking is currently disabled.</p>';
 		} else {
-			$themes = get_option('update_themes');
-			printf('<p>Last updated: %s (<strong>%s ago</strong>)</p>', date('r', $themes->last_checked), human_time_diff($themes->last_checked, time()));
+			$themes = get_transient('update_themes');
+			if ( ! is_object($themes) )
+				$themes = (object)array();
 			if ( ! isset($themes->response) )
 				$themes->response = array();
+			if ( ! isset($themes->last_checked) )
+				$themes->last_checked = 0;
+			printf('<p>Last updated: %s (<strong>%s ago</strong>)</p>', date('r', $themes->last_checked), human_time_diff($themes->last_checked, time()));
 			printf('<p>there are updates available for <strong>%s</strong> theme(s)</p>', count($themes->response));
 			
 			echo '<p><a href="' . add_query_arg('themes_update', 1) . '">Check for theme updates Now</a></p>';
 			if ( !empty($_GET['themes_update']) ) {
 				echo '<div style="margin-left: 2em">';
 				echo '<p>Checking for updates...</p>';
-				delete_option('update_themes');
+				delete_transient('update_themes');
 				$result = wp_update_themes();
 				if ( false === $result ) {
 					echo '<p>An Error occured during the update check</p>';
 				} else {
-					$new = get_option('update_themes');
+					$new = get_transient('update_themes');
 					if ( count($new->response) > count($themes->response) )
 						echo '<p>New updates were found</p>';
 					elseif ( count($new->response) == count($themes->response) )
@@ -189,7 +200,7 @@ class core_control_updates {
 		if ( $this->settings['core']['enabled'] == false ) {
 			echo '<p>Core update checking is currently disabled.</p>';
 		} else {
-			$core = get_option( 'update_core' );
+			$core = get_transient( 'update_core' );
 			printf('<p>Last updated: %s (<strong>%s ago</strong>)</p>', date('r', $core->last_checked), human_time_diff($core->last_checked, time()));
 			if ( 'development' == $core->updates[0]->response ) {
 				$rev = '';
@@ -208,15 +219,15 @@ class core_control_updates {
 			if ( !empty($_GET['core_update']) ) {
 				echo '<div style="margin-left: 2em">';
 				echo '<p>Checking for updates...</p>';
-				delete_option('update_core');
+				delete_transient('update_core');
 				$result = wp_version_check();
 				if ( false === $result ) {
 					echo '<p>An Error occured during the update check</p>';
 				} else {
-					$new = get_option('update_core');
-					if ( $core->updates[0]->current != $new->updates[0]->current )
+					$new = get_transient('update_core');
+					if ( is_object($new) && $core->updates[0]->current != $new->updates[0]->current )
 						printf('<p>A new upgrade is available: <strong>%s</strong></p>',  $new->updates[0]->current);
-					elseif ( $core->updates[0]->current == $new->updates[0]->current )
+					elseif ( is_object($new) && $core->updates[0]->current == $new->updates[0]->current )
 						echo '<p>No new updates were found</p>';
 					else
 						echo '<p>An unexpected condition was hit</p>';
@@ -236,4 +247,3 @@ class core_control_updates {
 	}
 
 }
-?>

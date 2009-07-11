@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Core Control
-Version: 0.8-dev
+Version: 0.8
 Plugin URI: http://dd32.id.au/wordpress-plugins/?plugin=core-control
 Description: Core Control is a set of plugin modules which can be used to control certain aspects of the WordPress control.
 Author: Dion Hulse
@@ -14,7 +14,7 @@ class core_control {
 	var $dd32_requires = 5;
 	var $basename = '';
 	var $folder = '';
-	var $version = '0.7-dev';
+	var $version = '0.8';
 	
 	var $modules = array();
 	
@@ -31,6 +31,7 @@ class core_control {
 
 		//Register general hooks.
 		add_action('admin_init', array(&$this, 'admin_init'));
+		add_action('admin_menu', array(&$this, 'admin_menu'));
 		register_activation_hook(__FILE__, array(&$this, 'activate'));
 		register_deactivation_hook(__FILE__, array(&$this, 'deactivate'));
 		
@@ -53,15 +54,14 @@ class core_control {
 		DD32::add_configure($this->basename, __('Core Control', 'core-control'), admin_url('tools.php?page=core-control'));
 		DD32::add_changelog($this->basename, 'http://svn.wp-plugins.org/core-control/trunk/readme.txt');
 
-		//add menus (not on post/ajax pages, causes PHP Warnings under 2.7/early 2.8's)
-		if ( !in_array($GLOBALS['pagenow'], array('admin-post.php', 'admin-ajax.php') ) )
-			add_submenu_page('tools.php', __('Core Control', 'core-control'), __('Core Control', 'core-control'), 'administrator', 'core-control', array(&$this, 'main_page'));
-		//Add page
-		add_action('core_control-default', array(&$this, 'default_page'));
-
 		//Add actions/filters
 		add_action('admin_post_core_control-modules', array(&$this, 'handle_posts'));
 
+		//Add page
+		add_action('core_control-default', array(&$this, 'default_page'));
+	}
+	function admin_menu() {
+		add_submenu_page('tools.php', __('Core Control', 'core-control'), __('Core Control', 'core-control'), 'administrator', 'core-control', array(&$this, 'main_page'));
 	}
 
 	function activate() {
