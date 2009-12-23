@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Updates Module
-Version: 0.9
+Version: 0.9.1
 Description: Core Control Updates module, This allows you to Disable Plugin/Theme/Core update checking, or to force a check to take place.
 Author: Dion Hulse
 Author URI: http://dd32.id.au/
@@ -102,8 +102,10 @@ class core_control_updates {
 			if ( ! $plugins = get_transient('update_plugins') )
 				$plugins = (object)array( 'last_checked' => 0, 'checked' => array(), 'response' => array());
 
-			printf('<p>Last updated: %s (<strong>%s ago</strong>)</p>', date('r', $plugins->last_checked), human_time_diff($plugins->last_checked, time()));
-			printf('<p><strong>%s</strong> plugins checked, there are updates available for <strong>%s</strong> plugin(s)</p>', count($plugins->checked), count($plugins->response));
+			if ( !empty($plugins->last_checked) )
+				printf('<p>Last updated: %s (<strong>%s ago</strong>)</p>', date('r', $plugins->last_checked), human_time_diff($plugins->last_checked, time()));
+			if ( isset($plugins->checked) && isset($plugins->response) )
+				printf('<p><strong>%s</strong> plugins checked, there are updates available for <strong>%s</strong> plugin(s)</p>', count($plugins->checked), count($plugins->response));
 			
 			echo '<p><a href="' . add_query_arg('plugins_update', 1) . '">Check for plugin updates Now</a></p>';
 			if ( !empty($_GET['plugins_update']) ) {

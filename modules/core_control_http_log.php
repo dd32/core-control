@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: HTTP Access Logger Module
-Version: 0.9
+Version: 0.9.1
 Description: Core Control HTTP Logger module, This allows you to Log external connections which WordPress makes.
 Author: Dion Hulse
 Author URI: http://dd32.id.au/
@@ -23,7 +23,7 @@ class core_control_http_log {
 		add_action('admin_post_core_control-http_log-inspect', array(&$this, 'handle_ajax_inspect'));
 		
 		//Enable Logging if so be it.
-		if ( $this->settings['logging'] != false ) {
+		if ( $this->settings['logging'] != false && ( !defined('WP_HTTP_BLOCK_EXTERNAL') || !WP_HTTP_BLOCK_EXTERNAL) ) {
 			add_action('http_api_debug', array(&$this, 'do_log'), 10, 3);
 			add_filter('http_request_args', array(&$this, 'do_log'), 10, 2 );
 			add_action('shutdown', array(&$this, 'end_request'));
@@ -151,7 +151,10 @@ class core_control_http_log {
 
 	function table() {
 		$https = get_posts( array('post_type' => 'http', 'post_status' => 'any', 'numberposts' => 0) );
-
+		if ( defined('WP_HTTP_BLOCK_EXTERNAL') && WP_HTTP_BLOCK_EXTERNAL ) {
+			echo '<p>Logging is currently disabled, It appears you are blocking outgoing connections in your wp-config.php file through the define <code>WP_HTTP_BLOCK_EXTERNAL</code>.</p>';
+			return;
+		}
 		?>
 		<form method="post" action="admin-post.php?action=core_control-http_log">
 		<br class="clear" />
