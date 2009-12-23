@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Cron Module
-Version: 0.7
+Version: 0.9
 Description: Core Control Cron module, This allows you to manually run WordPress Cron Jobs and to diagnose Cron issues.
 Author: Dion Hulse
 Author URI: http://dd32.id.au/
@@ -122,7 +122,7 @@ class core_control_cron {
 				foreach ( (array)$task as $id => $details ) {
 					$once = false === $details['schedule'];
 					
-					echo '<tr style="background-color: ' . $colour . ';">';
+					echo '<tr>';
 						echo '<th style="text-shadow: none !important;">',
 							$once ? 'Once Off' : 'Reoccurring Task<br/> ' . (isset($schedules[$details['schedule']]) ? $schedules[$details['schedule']]['display'] : '<em><small>' . $details['schedule'] . '</small></em>'),
 							'</th>';
@@ -165,8 +165,6 @@ class core_control_cron {
 			} //end cron
 		} //end crons
 		echo '</tbody></table>';
-		
-		echo '<p><strong>Please Note:</strong> Under 2.7 and 2.8 pre <a href="http://trac.wordpress.org/ticket/8808">#8808</a>, If you run a "future_publish_post" hook manually via this, the hook will be duplicated, and you will need to cancel the duplicated hook.</p>';
 		
 		echo '</div>';
 	}

@@ -1,8 +1,8 @@
 === Core Control ===
 Contributors: dd32
-Tags: 2.7, admin, filesystem, manager
-Requires at least: 2.7
-Stable tag: 0.8
+Tags: 2.9, admin, filesystem, manager
+Requires at least: 2.9
+Stable tag: 0.9
 
 Core Control is a set of plugin modules which can be used to control certain aspects of the WordPress Core.
 Currently, Core Control features modules for managing Filesystem Access, Managing plugin/theme/core updates, Managing HTTP Transports & External HTTP Request logging.
@@ -11,10 +11,10 @@ Currently, Core Control features modules for managing Filesystem Access, Managin
 
 Please Note: Core Control is mainly a Developers plugin, However it can be used by end users alike, Just realise, That novice users are not the initial target audience, and as such, this plugin (and its modules) may be more technical aimed.
 
+Core Control is only supported on WordPress 2.9+, Due to this being aimed at debugging and developers, Only the latest stable release will be supported. It may work in older versions, but this is untested.
+
 Core Control is a set of plugin modules which can be used to control certain aspects of the WordPress control.
 Currently, Core Control features modules for managing Filesystem Access, Managing plugin/theme/core updates, Managing HTTP Transports & External HTTP Request logging
-
-Please Note: Internationalization is not currently.. there :) Future releases will 
 
 = Filesystem Module =
 As of WordPress 2.5, WordPress has included a Filesystem abstraction method which allows The Plugin upgrader, Plugin Installer, Core upgrader, Theme upgrader, and soon to be, Theme Installer, the ability to modify files on the server which WordPress lies via a few methods, Direct Filesystem access (Only available to few), SSH2 (To a select few who have installed a PHP Extension) and 2 FTP methods.
@@ -30,8 +30,6 @@ As of WordPress 2.7, WordPress has included a new HTTP API, This simplifies the 
 This module Allows you to view which transports are used for what purposes (GET/POST requests), Allows you to test the transport (It requests a file hosted on my web server, and checks the response is correct), And if a module is found to not work as expected, Allows you to disable a transport.
 
 = HTTP Logging Module =
-This module requires either WordPress trunk(2.8) or WordPress 2.7.1 (or the 2.7 branch until thats released)
-
 The purpose of this module is to log all outgoing connections WordPress makes, It allows you to view the resulting data, as well as to view the time it has taken for each of the requests to be made.
 
 = Cron Module =
@@ -49,23 +47,27 @@ This plugin is primarily aimed at Developers, However, Its just as useable by no
 = Why are there no Questions here? =
 Because no-one has asked me.. Ask me some questions! wordpress@dd32.id.au
 
-== Change log ==
+== Changelog ==
 
-= 0.5 =
- * Original Alpha releases
-
-= 0.6 =
- * Initial Public Release
-
-= 0.7 =
- * HTTP Logger: Support Request Failures instead of erroring out..
- * Introduce the Cron Tasks Module
+= 0.9 =
+ * Updated to WordPress 2.9
+ * Fixed various warnings and compatibility issues.
 
 = 0.8 =
  * Move from Settings menu to the Tools menu, Sorry for the confusion folks, But it makes better sense there :)
  * HTTP: Allow to enable disabled transports after WP 2.8 HTTP do-over
  * Update Module: Switch to *_transient() for 2.8 compatibility
  * Fix 2.8.1's plugin security mashes..
+
+= 0.7 =
+ * HTTP Logger: Support Request Failures instead of erroring out..
+ * Introduce the Cron Tasks Module
+
+= 0.6 =
+ * Initial Public Release
+
+= 0.5 =
+ * Original Alpha releases
 
 == Future Modules ==
 These are only ideas, If you've got one you'd like added to the list, Get in touch with me :) wordpress@dd32.id.au

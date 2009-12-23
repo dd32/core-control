@@ -1,8 +1,8 @@
 <?php
 /*
 Plugin Name: Core Control
-Version: 0.9-dev
-Plugin URI: http://dd32.id.au/wordpress-plugins/?plugin=core-control
+Version: 0.5
+Plugin URI: http://dd32.id.au/wordpress-plugins/core-control/
 Description: Core Control is a set of plugin modules which can be used to control certain aspects of the WordPress control.
 Author: Dion Hulse
 Author URI: http://dd32.id.au/
@@ -10,11 +10,9 @@ Author URI: http://dd32.id.au/
 
 $GLOBALS['core-control'] = new core_control();
 class core_control {
-	
-	var $dd32_requires = 5;
 	var $basename = '';
 	var $folder = '';
-	var $version = '0.9-dev';
+	var $version = '0.9';
 	
 	var $modules = array();
 	
@@ -23,9 +21,6 @@ class core_control {
 		$this->basename = plugin_basename(__FILE__);
 		$this->folder = dirname($this->basename);
 
-		//Set the version of the DD32 library this plugin requires.
-		$GLOBALS['dd32_version'] = isset($GLOBALS['dd32_version']) ? max($GLOBALS['dd32_version'], $this->dd32_requires) : $this->dd32_requires;
-		add_action('init', array(&$this, 'load_dd32'), 20);
 		//load plugins after core class
 		add_action('init', array(&$this, 'load_modules'), 25);
 
@@ -37,11 +32,6 @@ class core_control {
 		
 	}
 	
-	function load_dd32() {
-		//Load common library
-		include 'inc/class.dd32.php';
-	}
-	
 	function admin_init() {
 		//Load any translation files needed:
 		load_plugin_textdomain('core-control', '', $this->folder . '/langs/');
@@ -51,9 +41,6 @@ class core_control {
 		//wp_register_script('core-control', plugins_url( $this->folder . '/core-control.js' ), array('jquery'), $this->version);
 		//wp_register_style ('core-control', plugins_url( $this->folder . '/core-control.css' ), array(), $this->version);
 
-		DD32::add_configure($this->basename, __('Core Control', 'core-control'), admin_url('tools.php?page=core-control'));
-		DD32::add_changelog($this->basename, 'http://svn.wp-plugins.org/core-control/trunk/readme.txt');
-
 		//Add actions/filters
 		add_action('admin_post_core_control-modules', array(&$this, 'handle_posts'));
 
@@ -61,15 +48,15 @@ class core_control {
 		add_action('core_control-default', array(&$this, 'default_page'));
 	}
 	function admin_menu() {
-		add_submenu_page('tools.php', __('Core Control', 'core-control'), __('Core Control', 'core-control'), 'administrator', 'core-control', array(&$this, 'main_page'));
+		add_submenu_page('tools.php', __('Core Control', 'core-control'), __('Core Control', 'core-control'), 'manage_options', 'core-control', array(&$this, 'main_page'));
 	}
 
 	function activate() {
 		global $wp_version;
-		if( ! version_compare( $wp_version, '2.7', '>=') ) {
-			if( function_exists('deactivate_plugins') )
+		if( ! version_compare( $wp_version, '2.9', '>=') ) {
+			if ( function_exists('deactivate_plugins') )
 				deactivate_plugins(__FILE__);
-			wp_die(__('<h1>Core Control</h1> Sorry, This plugin requires WordPress 2.7+', 'core-control'));
+			wp_die(__('<h1>Core Control</h1> Sorry, This plugin requires WordPress 2.9+', 'core-control'));
 		}
 	}
 	
@@ -129,8 +116,9 @@ class core_control {
 
 		echo '</div>';
 	}
+
 	function default_page() {
-		$files = DD32::find_files( WP_PLUGIN_DIR . '/' . $this->folder . '/modules/', array('pattern' => '*.php', 'levels' => 1, 'relative' => true) );
+		$files = $this->find_files( WP_PLUGIN_DIR . '/' . $this->folder . '/modules/', array('pattern' => '*.php', 'levels' => 1, 'relative' => true) );
 ?>
 <p>Welcome to Core Control, Please select the subsection from the above menu which you would like to modify</p>
 <p>You may Enable/Disable which modules are loaded by checking them in the following list:
@@ -164,6 +152,57 @@ class core_control {
 </p>
 </form>
 <?php
+	}
+
+	//HELPERS
+	function find_files( $folder, $args = array() ) {
+	
+		$folder = untrailingslashit($folder);
+	
+		$defaults = array( 'pattern' => '', 'levels' => 100, 'relative' => false );
+		$r = wp_parse_args($args, $defaults);
+
+		extract($r, EXTR_SKIP);
+		
+		//Now for recursive calls, clear relative, we'll handle it, and decrease the levels.
+		unset($r['relative']);
+		--$r['levels'];
+	
+		if ( ! $levels )
+			return array();
+		
+		if ( ! is_readable($folder) )
+			return false;
+
+		if ( true === $relative )
+			$relative = $folder;
+	
+		$files = array();
+		if ( $dir = @opendir( $folder ) ) {
+			while ( ( $file = readdir($dir) ) !== false ) {
+				if ( in_array($file, array('.', '..') ) )
+					continue;
+				if ( is_dir( $folder . '/' . $file ) ) {
+					$files2 = $this->find_files( $folder . '/' . $file, $r );
+					if( $files2 )
+						$files = array_merge($files, $files2 );
+					else if ( empty($pattern) || preg_match('|^' . str_replace('\*', '\w+', preg_quote($pattern)) . '$|i', $file) )
+						$files[] = $folder . '/' . $file . '/';
+				} else {
+					if ( empty($pattern) || preg_match('|^' . str_replace('\*', '\w+', preg_quote($pattern)) . '$|i', $file) )
+						$files[] = $folder . '/' . $file;
+				}
+			}
+		}
+		@closedir( $dir );
+	
+		if ( ! empty($relative) ) {
+			$relative = trailingslashit($relative);
+			foreach ( $files as $key => $file )
+				$files[$key] = preg_replace('!^' . preg_quote($relative) . '!', '', $file);
+		}
+	
+		return $files;
 	}
 
 }//end class

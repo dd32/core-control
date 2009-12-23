@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Updates Module
-Version: 0.6
+Version: 0.9
 Description: Core Control Updates module, This allows you to Disable Plugin/Theme/Core update checking, or to force a check to take place.
 Author: Dion Hulse
 Author URI: http://dd32.id.au/
@@ -100,13 +100,8 @@ class core_control_updates {
 			echo '<p>Plugin update checking is currently disabled</p>';
 		} else {
 			if ( ! $plugins = get_transient('update_plugins') )
-				$plugins = (object)array();
-			if ( ! isset($plugins->last_checked) )
-				$plugins->last_checked = 0;
-			if ( ! isset($plugins->checked) ) 
-				$plugins->checked = array();
-			if ( ! isset($plugins->response) )
-				$plugins->response = array();
+				$plugins = (object)array( 'last_checked' => 0, 'checked' => array(), 'response' => array());
+
 			printf('<p>Last updated: %s (<strong>%s ago</strong>)</p>', date('r', $plugins->last_checked), human_time_diff($plugins->last_checked, time()));
 			printf('<p><strong>%s</strong> plugins checked, there are updates available for <strong>%s</strong> plugin(s)</p>', count($plugins->checked), count($plugins->response));
 			
@@ -120,14 +115,16 @@ class core_control_updates {
 					echo '<p>An Error occured during the update check</p>';
 				} else {
 					$new = get_transient('update_plugins');
-					if ( is_object($plugins) && count($new->response) > count($plugins->response) )
-						echo '<p>New updates were found</p>';
-					elseif ( is_object($plugins) && count($new->response) == count($plugins->response) )
-						echo '<p>No new updates were found</p>';
-					elseif ( is_object($plugins) && count($new->response) < count($plugins->response) )
-						echo '<p>The available updates list has been updated</p>';
-					else
+					if ( !empty($new->response) && !empty($plugins->response) ) {
+						if ( count($new->response) > count($plugins->response) )
+							echo '<p>New updates were found</p>';
+						elseif ( count($new->response) == count($plugins->response) )
+							echo '<p>No new updates were found</p>';
+						elseif ( count($new->response) < count($plugins->response) )
+							echo '<p>The available updates list has been updated</p>';
+					} else {
 						echo '<p>There are no plugin updates avaialble at this time</p>';
+					}
 				}
 				
 				echo '</div>';
@@ -170,14 +167,16 @@ class core_control_updates {
 					echo '<p>An Error occured during the update check</p>';
 				} else {
 					$new = get_transient('update_themes');
-					if ( count($new->response) > count($themes->response) )
-						echo '<p>New updates were found</p>';
-					elseif ( count($new->response) == count($themes->response) )
-						echo '<p>No new updates were found</p>';
-					elseif ( count($new->response) < count($themes->response) )
-						echo '<p>The available updates list has been updated</p>';
-					else
+					if ( isset($new->response) && isset($themes->response) ) {
+						if ( count($new->response) > count($themes->response) )
+							echo '<p>New updates were found</p>';
+						elseif ( count($new->response) == count($themes->response) )
+							echo '<p>No new updates were found</p>';
+						elseif ( count($new->response) < count($themes->response) )
+							echo '<p>The available updates list has been updated</p>';
+					} else {
 						echo '<p>There are no theme updates avaialble at this time</p>';
+					}
 				}
 				
 				echo '</div>';
