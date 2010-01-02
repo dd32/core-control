@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Core Control
-Version: 0.9.1
+Version: 0.9.2
 Plugin URI: http://dd32.id.au/wordpress-plugins/core-control/
 Description: Core Control is a set of plugin modules which can be used to control certain aspects of the WordPress control.
 Author: Dion Hulse
@@ -78,11 +78,13 @@ class core_control {
 	}
 	
 	function handle_posts() {
-		foreach ( (array)$_POST['checked'] as $module )
+		$checked = isset($_POST['checked']) ? stripslashes_deep( (array)$_POST['checked'] ) : array();
+
+		foreach ( $checked as $module )
 			if ( 0 !== validate_file($module) )
 				wp_die('I dont trust you, That data looks malformed to me.');
 
-		update_option('core_control-active_modules', (array)$_POST['checked']);
+		update_option('core_control-active_modules', $checked);
 		wp_redirect( admin_url('tools.php?page=core-control') );
 	}
 	

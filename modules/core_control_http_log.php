@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: HTTP Access Logger Module
-Version: 0.9.1
+Version: 0.9.2
 Description: Core Control HTTP Logger module, This allows you to Log external connections which WordPress makes.
 Author: Dion Hulse
 Author URI: http://dd32.id.au/
@@ -12,8 +12,6 @@ class core_control_http_log {
 
 	function core_control_http_log() {
 		add_action('core_control-http_log', array(&$this, 'the_page'));
-
-		$_SERVER['REQUEST_URI'] = remove_query_arg(array('module_action'));
 		
 		$this->settings = array('logging' => false);
 

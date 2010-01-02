@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: HTTP Access Module
-Version: 0.7
+Version: 0.9.2
 Description: Core Control HTTP module, This allows you to Enable/Disable the different HTTP Access methods which WordPress 2.7+ supports
 Author: Dion Hulse
 Author URI: http://dd32.id.au/
@@ -11,8 +11,6 @@ class core_control_http {
 
 	function core_control_http() {
 		add_action('core_control-http', array(&$this, 'the_page'));
-
-		$_SERVER['REQUEST_URI'] = remove_query_arg(array('module_action', 'transport'));
 		
 		$this->settings = array('curl' => array('enabled' => true), 'streams' => array('enabled' => true), 'fopen' => array('enabled' => true), 'fsockopen' => array('enabled' => true), 'exthttp' => array('enabled' => true));
 

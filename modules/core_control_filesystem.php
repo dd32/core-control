@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Filesystem Module
-Version: 0.6
+Version: 0.9.2
 Description: Core Control Filesystem module, This allows you to Enable/Disable the different Filesystem access methods which WordPress supports for upgrades
 Author: Dion Hulse
 Author URI: http://dd32.id.au/
@@ -10,8 +10,6 @@ class core_control_filesystem {
 
 	function core_control_filesystem() {
 		add_action('core_control-fs', array(&$this, 'the_page'));
-
-		$_SERVER['REQUEST_URI'] = remove_query_arg(array('module_action', 'transport'));
 		
 		$this->settings = array('direct' => array('enabled' => true, 'forced' => false), 'ssh' => array('enabled' => true, 'forced' => false), 'ftpext' => array('enabled' => true, 'forced' => false), 'ftpsockets' => array('enabled' => true, 'forced' => false));
 
