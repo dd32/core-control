@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: HTTP Access Module
-Version: 0.9.2
+Version: 1.0
 Description: Core Control HTTP module, This allows you to Enable/Disable the different HTTP Access methods which WordPress 2.7+ supports
 Author: Dion Hulse
 Author URI: http://dd32.id.au/
@@ -19,9 +19,6 @@ class core_control_http {
 		foreach ( $this->settings as $transport => $opts )
 			$this->settings[$transport]['filter'] = "use_{$transport}_transport";
 		$this->settings['exthttp']['filter'] = 'use_http_extension_transport';
-		
-		//if ( ! has_filter('use_exthttp_transport') ) //If the function's not deprecated, we'll hook on the old one. see WP#8772
-		//	$this->settings['exthttp']['filter'] = 'use_http_extension_transport';
 
 		add_action('admin_post_core_control-http', array(&$this, 'handle_posts'));
 
@@ -142,7 +139,21 @@ class core_control_http {
 				echo '<tr><td colspan="4" style="background-color: #fffeeb;">';
 					echo "<p>Please wait...</p>";
 					$url = 'http://tools.dd32.id.au/wordpress/core-control.php';
-					$result = $class->request($url, array('timeout' => 10));
+					$args = array(
+						'method' => 'GET',
+						'timeout' => max(10, apply_filters( 'http_request_timeout', 5)),
+						'redirection' => apply_filters( 'http_request_redirection_count', 5),
+						'httpversion' => apply_filters( 'http_request_version', '1.0'),
+						'user-agent' => apply_filters( 'http_headers_useragent', 'WordPress/' . $GLOBALS['wp_version'] . '; ' . get_bloginfo( 'url' )  ),
+						'blocking' => true,
+						'headers' => array(),
+						'cookies' => array(),
+						'body' => null,
+						'compress' => false,
+						'decompress' => true,
+						'sslverify' => true
+					);
+					$result = $class->request($url, $args);
 					if ( is_wp_error($result) ) {
 						echo '<p><strong>An Error has occured:</strong> ' . $result->get_error_message() . '</p>';
 					} elseif ( '1563' === $result['body'] ) { //1563 is just a random number which was chosen to indicate successful retrieval
@@ -155,6 +166,83 @@ class core_control_http {
 		}
 		echo '</tbody></table>';
 		
+		echo '<h3>HTTP Related Constants</h3>';
+		$constants = array('WP_HTTP_BLOCK_EXTERNAL', 'WP_ACCESSIBLE_HOSTS', 'WP_PROXY_HOST', 'WP_PROXY_PORT', 'WP_PROXY_USERNAME', 'WP_PROXY_PASSWORD', 'WP_PROXY_BYPASS_HOSTS');
+		
+		echo '<table class="widefat">
+			<col style="text-align: left" width="20%" />
+			  <col />
+		';
+		echo '<thead>
+			  <tr>
+			  	<th>Constant</th>
+				<th>Value</th>
+			  </tr>
+			  </thead>
+			  <tbody>
+			  ';
+		foreach ( $constants as $constant ) {
+			if ( defined($constant) )
+				echo '<tr style="background-color: #e7804c">';
+			else
+				echo '<tr style="background-color: #e7f7d3">';
+			echo "<td>$constant</td>";
+			if ( defined($constant) )
+				echo '<td>' . var_export(constant($constant), true) . '</td>';
+			else
+				echo '<td><em>Undefined</em></td>';
+			echo '</tr>';
+		}
+		echo '</tbody></table>';
+
+		echo '<h3>HTTP Related Filters</h3>';
+		echo '<p><strong>Note:</strong> Some of these can be affected by plugins, and may cause unexpected side effects. The use_* set of filters is affected by disabling transports above for example.</p>';
+		$filters = array(
+						'http_request_timeout' => 5,
+						'http_request_redirection_count' => 5,
+						'http_request_version' => '1.0',
+						'http_headers_useragent' => 'WordPress/' . $GLOBALS['wp_version'] . '; ' . get_bloginfo( 'url' ),
+						'block_local_requests' => false,
+						
+						'use_fsockopen_transport' => false !== (($option = get_option( 'disable_fsockopen' )) && time()-$option < 43200),
+						'use_fopen_transport' => true,
+						'use_streams_transport' => true,
+						'use_http_extension_transport' => function_exists('http_request'),
+						'use_curl_transport' => function_exists('curl_init') && function_exists('curl_exec'),
+						
+						'https_local_ssl_verify' => true,
+						'https_ssl_verify' => true,
+						 );
+		
+		echo '<table class="widefat">
+			<col style="text-align: left" width="20%" />
+			<col width="20%" />
+			<col />
+		';
+		echo '<thead>
+			  <tr>
+			  	<th>Filter</th>
+				<th>Default Value</th>
+				<th>Current Value</th>
+			  </tr>
+			  </thead>
+			  <tbody>
+			  ';
+		foreach ( $filters as $filter => $default ) {
+			$current = apply_filters($filter, $default);
+			if ( $current != $default )
+				echo '<tr style="background-color: #e7804c">';
+			else
+				echo '<tr style="background-color: #e7f7d3">';
+			echo "<td>$filter</td>";
+			echo '<td>' . var_export($default, true) . '</td>';
+			echo '<td>';
+				var_export( $current );
+			echo '</td>';
+			echo '</tr>';
+		}
+		echo '</tbody></table>';
+
 		echo '</div>';
 	}
 }
