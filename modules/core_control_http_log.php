@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: HTTP Access Logger Module
-Version: 0.9.2
+Version: 1.0
 Description: Core Control HTTP Logger module, This allows you to Log external connections which WordPress makes.
 Author: Dion Hulse
 Author URI: http://dd32.id.au/
@@ -26,6 +26,10 @@ class core_control_http_log {
 			add_filter('http_request_args', array(&$this, 'do_log'), 10, 2 );
 			add_action('shutdown', array(&$this, 'end_request'));
 		}
+		register_post_type('http', array(
+										'label' => __('Core Control: HTTP Logger data', 'core-control'),
+										'public' => false
+									));
 	}
 
 	function has_page() {
@@ -87,7 +91,7 @@ class core_control_http_log {
 			return;
 		//A Request has finished, Lets remove useless items:
 		unset($this->request->start);
-		$post_content_filtered  ='';
+		$post_content_filtered = '';
 		if ( !is_wp_error($this->request->result) && isset($this->request->result['body']) ) {
 			$post_content_filtered = $this->request->result['body'];
 			unset($this->request->result['body']);
@@ -119,6 +123,15 @@ class core_control_http_log {
 		if ( isset($_POST['delete-selected']) )
 			foreach ( (array)$_POST['checked'] as $id )
 				wp_delete_post($id);
+		if ( isset($_POST['delete-all']) ) {
+			set_time_limit(0); // we may need this if someone left it activated..
+			// Delete 20 at a time for memory usage reasons.
+			while ( $https = get_posts( array('post_type' => 'http', 'post_status' => 'any', 'numberposts' => 20) ) ) {
+				foreach ( $https as $post ) {
+					wp_delete_post($post->ID);
+				}
+			}
+		}
 		
 		update_option('core_control-http_log', $option);
 		wp_redirect(admin_url('tools.php?page=core-control&module=http_log'));
@@ -148,7 +161,7 @@ class core_control_http_log {
 	}
 
 	function table() {
-		$https = get_posts( array('post_type' => 'http', 'post_status' => 'any', 'numberposts' => 0) );
+		$https = get_posts( array('post_type' => 'http', 'post_status' => 'any', 'numberposts' => -1) );
 		if ( defined('WP_HTTP_BLOCK_EXTERNAL') && WP_HTTP_BLOCK_EXTERNAL ) {
 			echo '<p>Logging is currently disabled, It appears you are blocking outgoing connections in your wp-config.php file through the define <code>WP_HTTP_BLOCK_EXTERNAL</code>.</p>';
 			return;
@@ -179,7 +192,7 @@ class core_control_http_log {
 			div = $(div);
 			div.attr('id', 'details-' + id);
 			$('#http-' + id).after( div );
-			$.post( '<?php echo js_escape(admin_url('admin-post.php')) ?>', {
+			$.post( '<?php echo esc_js(admin_url('admin-post.php')) ?>', {
 				'action': 'core_control-http_log-inspect',
 				'ID': id
 			}, function(data) {
@@ -210,7 +223,12 @@ class core_control_http_log {
 				background-color: #0066FF;
 				color:#FFFFFF;
 			}
+			.tab-content table th {
+				white-space: nowrap;
+			}
 		</style>
+		<input type="submit" name="delete-selected" class="button-primary" value="Delete Selected Requests" />
+		<input type="submit" name="delete-all" class="button-primary" value="Delete All Stored Requests" />
 		<table class="widefat requests">
 			<thead>
 			<tr>
@@ -239,6 +257,7 @@ class core_control_http_log {
 			</tbody>
 		</table>
 		<input type="submit" name="delete-selected" class="button-primary" value="Delete Selected Requests" />
+		<input type="submit" name="delete-all" class="button-primary" value="Delete All Stored Requests" />
 		</form>
 		<?php
 	}
