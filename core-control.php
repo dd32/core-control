@@ -53,20 +53,26 @@ class core_control {
 
 	function activate() {
 		global $wp_version;
-		if( ! version_compare( $wp_version, '2.9', '>=') ) {
+		if ( ! version_compare( $wp_version, '3.0', '>=') ) {
 			if ( function_exists('deactivate_plugins') )
 				deactivate_plugins(__FILE__);
-			wp_die(__('<h1>Core Control</h1> Sorry, This plugin requires WordPress 2.9+', 'core-control'));
+			die(__('<strong>Core Control:</strong> Sorry, This plugin requires WordPress 3.0+', 'core-control'));
+		}
+		if ( version_compare(PHP_VERSION, '5.2.0', '<') ) {
+			deactivate_plugins(__FILE__); // Deactivate ourself
+			die( sprintf(__('<strong>Core Control:</strong> Sorry, This plugin has taken a bold step in requiring PHP 5.2+, Your server is currently running PHP %s, Please bug your host to upgrade to a recent version of PHP which is less bug-prone. At last count, <strong>over 80%% of WordPress installs are using PHP 5.2+</strong>.', 'core-control'), PHP_VERSION) );
 		}
 	}
 	
 	function deactivate() {
-
+		delete_option('core_control-active_modules');
 	}
 
 	function load_modules() {
 		$modules = get_option('core_control-active_modules', array());
 		foreach ( $modules as $module ) {
+			if ( ! file_exists(WP_PLUGIN_DIR . '/' . $this->folder . '/modules/' . $module) )
+				continue;
 			include_once WP_PLUGIN_DIR . '/' . $this->folder . '/modules/' . $module;
 			$class = basename($module, '.php');
 			$this->modules[ $class ] = new $class;
@@ -80,9 +86,11 @@ class core_control {
 	function handle_posts() {
 		$checked = isset($_POST['checked']) ? stripslashes_deep( (array)$_POST['checked'] ) : array();
 
-		foreach ( $checked as $module )
-			if ( 0 !== validate_file($module) )
-				wp_die('I dont trust you, That data looks malformed to me.');
+		foreach ( $checked as $index => $module ) {
+			if ( 0 !== validate_file($module) ||
+				! file_exists(WP_PLUGIN_DIR . '/' . $this->folder . '/modules/' . $module) )
+					unset($checked[$index]);
+		}
 
 		update_option('core_control-active_modules', $checked);
 		wp_redirect( admin_url('tools.php?page=core-control') );
@@ -141,7 +149,7 @@ class core_control {
 			$style = $active ? ' style="background-color: #e7f7d3"' : '';
 	?>
 	<tr<?php echo $style ?>>
-		<th scope="row" class="check-column"><input type="checkbox" name="checked[]" value="<?php echo attribute_escape($module) ?>" <?php if ( $active ) echo 'checked="checked"' ?> /></th>
+		<th scope="row" class="check-column"><input type="checkbox" name="checked[]" value="<?php echo esc_attr($module) ?>" <?php checked($active); ?> /></th>
 		<td><?php echo $details['Title'] . ' ' . $details['Version'] ?></td>
 		<td><?php echo $details['Description'] ?></td>
 	</tr>
