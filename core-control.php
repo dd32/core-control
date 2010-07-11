@@ -58,10 +58,11 @@ class core_control {
 				deactivate_plugins(__FILE__);
 			die(__('<strong>Core Control:</strong> Sorry, This plugin requires WordPress 3.0+', 'core-control'));
 		}
+		/* I WISH..
 		if ( version_compare(PHP_VERSION, '5.2.0', '<') ) {
 			deactivate_plugins(__FILE__); // Deactivate ourself
 			die( sprintf(__('<strong>Core Control:</strong> Sorry, This plugin has taken a bold step in requiring PHP 5.2+, Your server is currently running PHP %s, Please bug your host to upgrade to a recent version of PHP which is less bug-prone. At last count, <strong>over 80%% of WordPress installs are using PHP 5.2+</strong>.', 'core-control'), PHP_VERSION) );
-		}
+		}*/
 	}
 	
 	function deactivate() {
@@ -100,6 +101,9 @@ class core_control {
 		echo '<div class="wrap">';
 		screen_icon('tools');
 		echo '<h2>Core Control</h2>';
+	
+		if ( version_compare(PHP_VERSION, '5.2.0', '<') )
+			printf(__('<p><strong>Core Control:</strong> WARNING!! Your server is currently running PHP %s, Please bug your host to upgrade to a recent version of PHP which is less bug-prone. At last count, <strong>over 80%% of WordPress installs are using PHP 5.2+</strong>, WordPress will require PHP 5.2+ some day soon, Prepare while your have time time.</p>', 'core-control'), PHP_VERSION);
 		
 		$module = !empty($_GET['module']) ? $_GET['module'] : 'default';
 		
