@@ -84,14 +84,6 @@ class core_control_filesystem {
 
 		foreach ( array( 'direct' => 'Direct', 'ssh' => 'SSH2', 'ftpext' => 'PHP FTP Extension', 'ftpsockets' => 'PHP FTP Sockets' ) as $transport => $text ) {
 
-			//$abstraction_file = apply_filters('filesystem_method_file', ABSPATH . 'wp-admin/includes/class-wp-filesystem-' . $transport . '.php', $transport);
-		//	if( ! file_exists($abstraction_file) )
-	//			continue;
-//
-		//	require_once($abstraction_file);
-	//		$method = "WP_Filesystem_$transport";
-//			$fs = new $method();
-
 			$useable = $this->is_available($transport);
 			$disabled = $this->settings[$transport]['enabled'] == false;
 			$colour = $useable ? '#e7f7d3' : '#ee4546';
@@ -125,21 +117,6 @@ class core_control_filesystem {
 				echo '</td>';
 				echo '<td>' . $extra . '</td>';
 			echo '</tr>';
-			//Do the testing.
-			/*if ( isset($_GET['module_action']) && 'testtransport' == $_GET['module_action'] && $transport == $_GET['transport'] ) {
-				echo '<tr><td colspan="4" style="background-color: #fffeeb;">';
-					echo "<p>Please wait...</p>";
-					$url = 'http://tools.dd32.id.au/wordpress/core-control.php';
-					$result = $class->request($url, array('timeout' => 10));
-					if ( is_wp_error($result) ) {
-						echo '<p><strong>An Error has occured:</strong> ' . $result->get_error_message() . '</p>';
-					} elseif ( '1563' === $result['body'] ) { //1563 is just a random number which was chosen to indicate successful retrieval
-						printf('<p>Successfully retrieved &amp; verified document from %s</p>', $url);
-					} else {
-						printf('<p>Whilst an error was not returned, The server returned an unexpected result: <em>%s</em>, HTTP result: %s %s', htmlentities($result['body']), $result['response']['code'], $result['response']['message']);
-					}
-				echo '</td></tr>';
-			}*/
 		}
 		echo '</table>';
 		echo '</div>';
