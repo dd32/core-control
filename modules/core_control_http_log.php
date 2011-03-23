@@ -28,7 +28,8 @@ class core_control_http_log {
 		}
 		register_post_type('http', array(
 										'label' => __('Core Control: HTTP Logger data', 'core-control'),
-										'public' => false
+										'public' => false,
+										'rewrite' => false,
 									));
 	}
 

@@ -85,6 +85,8 @@ class core_control_http {
 		
 		foreach ( array('exthttp' => 'PHP HTTP Extension', 'curl' => 'cURL', 'streams' => 'PHP Streams', 'fopen' => 'PHP fopen()', 'fsockopen' => 'PHP fsockopen()' ) as $transport => $text ) {
 			$class = "WP_Http_$transport";
+			if ( ! class_exists($class) )
+				continue;
 			$class = new $class;
 			
 			//Before we test, we need to remove any filters we've loaded.
