@@ -75,13 +75,6 @@ class core_control_http {
 			  </thead>
 			  <tbody>
 			  ';
-
-		$primary_get = WP_Http::_getTransport();
-		$primary_get_nonblocking = WP_Http::_getTransport(array('blocking' => false));
-		$primary_post = WP_Http::_postTransport();
-		$primary_post_nonblocking = WP_Http::_postTransport(array('blocking' => false));
-		foreach ( array('primary_get', 'primary_post', 'primary_get_nonblocking', 'primary_post_nonblocking') as $var )
-			$$var = strtolower(get_class(${$var}[0]));
 		
 		foreach ( array('exthttp' => 'PHP HTTP Extension', 'curl' => 'cURL', 'streams' => 'PHP Streams', 'fopen' => 'PHP fopen()', 'fsockopen' => 'PHP fsockopen()' ) as $transport => $text ) {
 			$class = "WP_Http_$transport";
@@ -105,7 +98,7 @@ class core_control_http {
 			
 			//This may look messy, But it works well and doesnt mean too many IF branches
 			$extra = '';
-			foreach ( array('primary_get', 'primary_post', 'primary_get_nonblocking', 'primary_post_nonblocking') as $var ) {
+			/*foreach ( array('primary_get', 'primary_post', 'primary_get_nonblocking', 'primary_post_nonblocking') as $var ) {
 				if ( strtolower("WP_Http_$transport") == $$var ) {
 					$var = substr($var, 8);
 					$extra .= 'Primary ';
@@ -117,7 +110,7 @@ class core_control_http {
 						$extra .= '(non-blocking)';
 					$extra .= '<br />';
 				}
-			}
+			}*/
 
 			echo '<tr style="background-color: ' . $colour . ';">';
 				echo '<th style="text-shadow: none !important;">' . $text . '</th>';
