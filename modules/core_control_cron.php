@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Cron Module
-Version: 0.9.2
+Version: 1.1
 Description: Core Control Cron module, This allows you to manually run WordPress Cron Jobs and to diagnose Cron issues.
 Author: Dion Hulse
 Author URI: http://dd32.id.au/
@@ -9,7 +9,7 @@ Author URI: http://dd32.id.au/
 
 class core_control_cron {
 
-	function core_control_cron() {
+	function __construct() {
 		add_action('core_control-cron', array(&$this, 'the_page'));
 
 		$this->settings = array();

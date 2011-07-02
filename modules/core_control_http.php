@@ -9,7 +9,7 @@ Author URI: http://dd32.id.au/
 
 class core_control_http {
 
-	function core_control_http() {
+	function __construct() {
 		add_action('core_control-http', array(&$this, 'the_page'));
 		
 		$this->settings = array('curl' => array('enabled' => true), 'streams' => array('enabled' => true), 'fopen' => array('enabled' => true), 'fsockopen' => array('enabled' => true), 'exthttp' => array('enabled' => true));
@@ -24,7 +24,7 @@ class core_control_http {
 
 		foreach ( $this->settings as $transport => $options )
 			if ( $options['enabled'] === false )
-				add_filter($options['filter'], array(&$this, 'disable_transport'));
+				add_filter($options['filter'], '__return_false' );
 	}
 
 	function has_page() {
@@ -33,10 +33,6 @@ class core_control_http {
 
 	function menu() {
 		return array('http', 'External HTTP Access');
-	}
-	
-	function disable_transport() {
-		return false;
 	}
 	
 	function handle_posts() {
@@ -83,12 +79,12 @@ class core_control_http {
 			$class = new $class;
 			
 			//Before we test, we need to remove any filters we've loaded.
-			$filtered = has_filter($this->settings[$transport]['filter'], array(&$this, 'disable_transport'));
+			$filtered = has_filter($this->settings[$transport]['filter'], '__return_false' );
 			if ( $filtered )
-				remove_filter($this->settings[$transport]['filter'], array(&$this, 'disable_transport'));
+				remove_filter($this->settings[$transport]['filter'], '__return_false' );
 			$useable = $class->test();
 			if ( $filtered )
-				add_filter($this->settings[$transport]['filter'], array(&$this, 'disable_transport'));
+				add_filter($this->settings[$transport]['filter'], '__return_false' );
 			$disabled = $this->settings[$transport]['enabled'] === false;
 			$colour = $useable ? '#e7f7d3' : '#ee4546';
 			if ( $useable && $disabled )
