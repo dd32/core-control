@@ -92,21 +92,7 @@ class core_control_http {
 			
 			$status = $disabled ? 'Disabled' : ($useable ? 'Available' : 'Not Available');
 			
-			//This may look messy, But it works well and doesnt mean too many IF branches
 			$extra = '';
-			/*foreach ( array('primary_get', 'primary_post', 'primary_get_nonblocking', 'primary_post_nonblocking') as $var ) {
-				if ( strtolower("WP_Http_$transport") == $$var ) {
-					$var = substr($var, 8);
-					$extra .= 'Primary ';
-					if ( 'g' == $var{0} )
-						$extra .= 'GET';
-					else
-						$extra .= 'POST';
-					if ( strpos($var, '_') )
-						$extra .= '(non-blocking)';
-					$extra .= '<br />';
-				}
-			}*/
 
 			echo '<tr style="background-color: ' . $colour . ';">';
 				echo '<th style="text-shadow: none !important;">' . $text . '</th>';
@@ -195,11 +181,9 @@ class core_control_http {
 						'http_headers_useragent' => 'WordPress/' . $GLOBALS['wp_version'] . '; ' . get_bloginfo( 'url' ),
 						'block_local_requests' => false,
 						
-						'use_fsockopen_transport' => false !== (($option = get_option( 'disable_fsockopen' )) && time()-$option < 43200),
-						'use_fopen_transport' => true,
+						'use_fsockopen_transport' => true,
 						'use_streams_transport' => true,
-						'use_http_extension_transport' => function_exists('http_request'),
-						'use_curl_transport' => function_exists('curl_init') && function_exists('curl_exec'),
+						'use_curl_transport' => true,
 						
 						'https_local_ssl_verify' => true,
 						'https_ssl_verify' => true,

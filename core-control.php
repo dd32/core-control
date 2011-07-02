@@ -25,28 +25,17 @@ class core_control {
 		add_action('plugins_loaded', array(&$this, 'load_modules'), 1);
 
 		//Register general hooks.
-		add_action('admin_init', array(&$this, 'admin_init'));
 		add_action('admin_menu', array(&$this, 'admin_menu'));
 		register_activation_hook(__FILE__, array(&$this, 'activate'));
-		
-	}
-	
-	function admin_init() {
-		//Load any translation files needed:
-		load_plugin_textdomain('core-control', '', $this->folder . '/langs/');
-
-		//Register our JS & CSS
-		//When i implement it and convert over.. yes.
-		//wp_register_script('core-control', plugins_url( $this->folder . '/core-control.js' ), array('jquery'), $this->version);
-		//wp_register_style ('core-control', plugins_url( $this->folder . '/core-control.css' ), array(), $this->version);
 
 		//Add actions/filters
 		add_action('admin_post_core_control-modules', array(&$this, 'handle_posts'));
 
 		//Add page
 		add_action('core_control-default', array(&$this, 'default_page'));
-	}
 
+	}
+	
 	function admin_menu() {
 		add_submenu_page('tools.php', __('Core Control', 'core-control'), __('Core Control', 'core-control'), 'manage_options', 'core-control', array(&$this, 'main_page'));
 	}
