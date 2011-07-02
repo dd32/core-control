@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Core Control
-Version: 1.0
+Version: 1.1
 Plugin URI: http://dd32.id.au/wordpress-plugins/core-control/
 Description: Core Control is a set of plugin modules which can be used to control certain aspects of the WordPress control.
 Author: Dion Hulse

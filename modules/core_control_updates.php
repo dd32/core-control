@@ -121,7 +121,7 @@ class core_control_updates {
 				if ( false === $result ) {
 					echo '<p>An Error occured during the update check</p>';
 				} else {
-					$new = get_transient('update_plugins');
+					$new = get_site_transient('update_plugins');
 					if ( !empty($new->response) && !empty($plugins->response) ) {
 						if ( count($new->response) > count($plugins->response) )
 							echo '<p>New updates were found</p>';
@@ -173,7 +173,7 @@ class core_control_updates {
 				if ( false === $result ) {
 					echo '<p>An Error occured during the update check</p>';
 				} else {
-					$new = get_transient('update_themes');
+					$new = get_site_transient('update_themes');
 					if ( isset($new->response) && isset($themes->response) ) {
 						if ( count($new->response) > count($themes->response) )
 							echo '<p>New updates were found</p>';
