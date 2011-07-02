@@ -120,6 +120,7 @@ class core_control_http {
 						'method' => 'GET',
 						'timeout' => max(10, apply_filters( 'http_request_timeout', 5)),
 						'redirection' => apply_filters( 'http_request_redirection_count', 5),
+						'_redirection' => apply_filters( 'http_request_redirection_count', 5),
 						'httpversion' => apply_filters( 'http_request_version', '1.0'),
 						'user-agent' => apply_filters( 'http_headers_useragent', 'WordPress/' . $GLOBALS['wp_version'] . '; ' . get_bloginfo( 'url' )  ),
 						'blocking' => true,
@@ -128,7 +129,9 @@ class core_control_http {
 						'body' => null,
 						'compress' => false,
 						'decompress' => true,
-						'sslverify' => true
+						'sslverify' => true,
+						'filename' => '',
+						'stream' => false,
 					);
 					$result = $class->request($url, $args);
 					if ( is_wp_error($result) ) {
