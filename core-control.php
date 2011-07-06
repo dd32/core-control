@@ -45,7 +45,7 @@ class core_control {
 		if ( ! version_compare( $wp_version, '3.2', '>=') ) {
 			if ( function_exists('deactivate_plugins') )
 				deactivate_plugins(__FILE__);
-			die(__('<strong>Core Control:</strong> Sorry, This plugin requires WordPress 3.0+', 'core-control'));
+			die(__('<strong>Core Control:</strong> Sorry, This plugin requires WordPress 3.2+', 'core-control'));
 		}
 	}
 
