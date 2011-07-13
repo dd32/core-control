@@ -54,6 +54,9 @@ Because no-one has asked me.. Ask me some questions! wordpress@dd32.id.au
 
 == Changelog ==
 
+= 1.2 =
+ * Cron Module: Identify Class-hooked functions better
+
 = 1.1 =
  * 3.2 Compatibility
  * A few notices fixed

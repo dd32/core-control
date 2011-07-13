@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Cron Module
-Version: 1.1
+Version: 1.2
 Description: Core Control Cron module, This allows you to manually run WordPress Cron Jobs and to diagnose Cron issues.
 Author: Dion Hulse
 Author URI: http://dd32.id.au/
@@ -139,7 +139,7 @@ class core_control_cron {
 							$functions = array();
 							foreach ( (array)$GLOBALS['wp_filter'][$hook] as $priority => $function ) {
 								foreach ( $function as $hook_details )
-									$functions[] = (isset($hook_details['class']) ? $hook_details['class'] . '::' : '') . $hook_details['function'] . '()';
+									$functions[] = (isset($hook_details['class']) ? $hook_details['class'] . '::' : '') . ( is_array($hook_details['function']) ? get_class($hook_details['function'][0]) . '->' . $hook_details['function'][1] : $hook_details['function'] ) . '()';
 							}
 							echo '<br/><strong>Hooked functions:</strong> ' . implode(', ', $functions);
 						}
