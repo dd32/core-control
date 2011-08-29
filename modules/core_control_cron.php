@@ -70,6 +70,9 @@ class core_control_cron {
 			list($time, $hook, $id) = explode(':', urldecode(stripslashes($_GET['task'])));
 
 			do_action_ref_array($hook, $crons[$time][$hook][$id]['args']);
+			
+			if ( empty($crons[$time][$hook][$id]['schedule']) )
+				wp_unschedule_event($time, $hook, $crons[$time][$hook][$id]['args']);
 
 			$url = add_query_arg('task', 'run', $url);
 		}	
@@ -124,16 +127,10 @@ class core_control_cron {
 						echo '<th style="text-shadow: none !important;">',
 							$once ? 'Once Off' : 'Reoccurring Task<br/> ' . (isset($schedules[$details['schedule']]) ? $schedules[$details['schedule']]['display'] : '<em><small>' . $details['schedule'] . '</small></em>'),
 							'</th>';
-						echo '<td>';
-						//Ugly i know, I'll replace it at some point when i work out what i've done to deserve this..
-						echo gmdate( 'Y-m-d H:i:s', $time + get_option( 'gmt_offset' ) * 3600 );
-						echo ' ';
-						echo get_option( 'gmt_offset' ) > 0 ? '+' : '-';
-						if ( $pos = strpos(get_option( 'gmt_offset' ), '.') )
-							echo (int)get_option( 'gmt_offset' ) . 60 * (float)( '0.' . substr(get_option( 'gmt_offset' ), $pos+1) );
-						else
-							echo get_option( 'gmt_offset' ) * 100;
-						echo '</td>';
+						$time_until = human_time_diff($time + (get_option( 'gmt_offset' ) * 3600) );
+						echo '<td><span title="' . esc_attr($time_until) . '">';
+						echo gmdate( 'Y-m-d H:i:s', $time + (get_option( 'gmt_offset' ) * 3600) );
+						echo '</span></td>';
 						echo '<td>' . $hook;
 						if ( isset($GLOBALS['wp_filter'][$hook]) ) {
 							$functions = array();

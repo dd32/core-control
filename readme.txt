@@ -56,6 +56,8 @@ Because no-one has asked me.. Ask me some questions! wordpress@dd32.id.au
 
 = 1.2 =
  * Cron Module: Identify Class-hooked functions better
+ * Cron Module: Date/Time is displayed in the GMT offset the site is setup in
+ * Cron Module: Running a once-off task now clears that schedule.
 
 = 1.1 =
  * 3.2 Compatibility
