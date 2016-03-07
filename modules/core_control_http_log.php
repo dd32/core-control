@@ -4,7 +4,7 @@ Plugin Name: HTTP Access Logger Module
 Version: 1.1
 Description: Core Control HTTP Logger module, This allows you to Log external connections which WordPress makes.
 Author: Dion Hulse
-Author URI: http://dd32.id.au/
+Author URI: https://dd32.id.au/
 */
 class core_control_http_log {
 
@@ -69,7 +69,8 @@ class core_control_http_log {
 			return $data;
 		//starting..
 		} elseif ( 'pre_http_request' == current_filter() ) {
-			$transport = WP_HTTP::_get_first_available_transport($log_type /* $args */, $extra /* $url */);
+			$wp_http = new WP_HTTP;
+			$transport = $wp_http->_get_first_available_transport($log_type /* $args */, $extra /* $url */);
 
 			$this->request->start = $this->timer_start();
 			$this->request->realtime = time();
@@ -365,7 +366,7 @@ class core_control_http_log {
 				if ( !is_wp_error($the_request->result) && !empty($the_request->result['headers']) ) {
 					foreach ( $the_request->result['headers'] as $header => $value ) {
 						$header = htmlentities($header);
-						$value = htmlentities($value);
+						$value = htmlentities( is_array( $value ) ? print_r( $value, true ) : $value );
 						echo '<tr>';
 							echo '<th>' . $header . '</th>';
 							echo '<td>' . $value . '</td>';

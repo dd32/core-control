@@ -4,7 +4,7 @@ Plugin Name: Filesystem Module
 Version: 1.1
 Description: Core Control Filesystem module, This allows you to Enable/Disable the different Filesystem access methods which WordPress supports for upgrades
 Author: Dion Hulse
-Author URI: http://dd32.id.au/
+Author URI: https://dd32.id.au/
 */
 class core_control_filesystem {
 
