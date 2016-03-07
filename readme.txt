@@ -1,17 +1,16 @@
 === Core Control ===
 Contributors: dd32
-Tags: 3.0, admin, filesystem, manager
-Requires at least: 3.2
-Stable tag: 1.1
+Tags: debug, filesystem, manager
+Requires at least: 4.0
+Tested Up To: 4.5
+Stable tag: 1.2
 
 Core Control is a set of plugin modules which can be used to control certain aspects of the WordPress Core.
 Currently, Core Control features modules for managing Filesystem Access, Managing plugin/theme/core updates, Managing HTTP Transports & External HTTP Request logging.
 
 == Description ==
 
-Please Note: Core Control is mainly a Developers plugin, However it can be used by end users alike, Just realise, That novice users are not the initial target audience, and as such, this plugin (and its modules) may be more technical aimed.
-
-Core Control is only supported on WordPress 2.9+, Due to this being aimed at debugging and developers, Only the latest stable release will be supported. It may work in older versions, but this is untested.
+Please Note: Core Control is mainly a developers plugin, however it can be used by end users alike, Just realise, That novice users are not the initial target audience, and as such, this plugin (and its modules) may be more technical aimed.
 
 Core Control is a set of plugin modules which can be used to control certain aspects of the WordPress control.
 Currently, Core Control features modules for managing Filesystem Access, Managing plugin/theme/core updates, Managing HTTP Transports & External HTTP Request logging
@@ -35,7 +34,7 @@ The purpose of this module is to log all outgoing connections WordPress makes, I
 = Cron Module =
 This module is designed to allow you to view the WordPress Cron tasks which are currently scheduled to occur.
 
-The Module allows you to run any task by clicking a link, and allows the cancelation of Once-Off scheduled tasks,  However it is not recomended unless you are sure of what you are doing.
+The Module allows you to run any task by clicking a link, and allows the cancelation of Once-Off scheduled tasks, however it is not recomended unless you are sure of what you are doing.
 
 Future revisions of this Module will most likely allow you to configure custom tasks as well for testing purposes.
 
@@ -47,17 +46,13 @@ This plugin is primarily aimed at Developers, However, Its just as useable by no
 = Why are there no Questions here? =
 Because no-one has asked me.. Ask me some questions! wordpress@dd32.id.au
 
-== Upgrade Notice ==
-
-= 1.1 =
- WordPress 3.2 compatibility
-
 == Changelog ==
 
 = 1.2 =
  * Cron Module: Identify Class-hooked functions better
  * Cron Module: Date/Time is displayed in the GMT offset the site is setup in
  * Cron Module: Running a once-off task now clears that schedule.
+ * Cron Module: PHP Notice with static methods fixed.
 
 = 1.1 =
  * 3.2 Compatibility
