@@ -135,8 +135,19 @@ class core_control_cron {
 						if ( isset($GLOBALS['wp_filter'][$hook]) ) {
 							$functions = array();
 							foreach ( (array)$GLOBALS['wp_filter'][$hook] as $priority => $function ) {
-								foreach ( $function as $hook_details )
-									$functions[] = (isset($hook_details['class']) ? $hook_details['class'] . '::' : '') . ( is_array($hook_details['function']) ? get_class($hook_details['function'][0]) . '->' . $hook_details['function'][1] : $hook_details['function'] ) . '()';
+								foreach ( $function as $hook_details ) {
+									if ( isset( $hook_details['class'] ) ) {
+										$functions[] = $hook_details['class'] . '::' . $hook_details['function'];
+									} elseif ( is_array( $hook_details['function'] ) ) {
+										if ( is_string( $hook_details['function'][0] ) ) {
+											$functions[] = $hook_details['function'][0] . '::' . $hook_details['function'][1];
+										} else {
+											$functions[] = get_class( $hook_details['function'][0] ) . '->' . $hook_details['function'][1];
+										}
+									} else {
+										$functions[] = $hook_details['function'];
+									}
+								}
 							}
 							echo '<br/><strong>Hooked functions:</strong> ' . implode(', ', $functions);
 						}
@@ -164,3 +175,4 @@ class core_control_cron {
 		echo '</div>';
 	}
 }
+
